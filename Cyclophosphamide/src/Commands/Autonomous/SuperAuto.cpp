@@ -11,10 +11,10 @@
 
 Autonomous *Autonomous::createSuperAuto() {
 	Autonomous *cmd = new Autonomous("Autonomous-SuperAuto");
-	cmd->AddSequential(new WaitCommand(.75));
+	/*cmd->AddSequential(new WaitCommand(.75));
 	cmd->AddSequential(new TimedDrive(.88, 1.0));
 	// above used to be 1.35, .7
 
-	cmd->AddSequential(new WaitCommand(420.0));
+	cmd->AddSequential(new WaitCommand(420.0));*/
 	return cmd;
 }

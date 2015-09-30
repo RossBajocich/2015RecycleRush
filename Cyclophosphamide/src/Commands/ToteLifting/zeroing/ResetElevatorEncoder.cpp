@@ -10,9 +10,10 @@ void ResetElevatorEncoder::Initialize() {
 	/*
 	 * Why would we ever want to zero the encoder unless it was below the previous value??
 	 */
-	if (toteLifter->getEncoder()->PIDGet() < 0) {
+	if (toteLifter->getEncoder()->PIDGet() <= 0) {
 		toteLifter->getEncoder()->Reset();
 	}
+	toteLifter->getPID()->SetSetpoint(0);
 }
 
 // Called repeatedly when this Command is scheduled to run

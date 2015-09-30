@@ -46,16 +46,16 @@ void OmegaSupreme::RobotInit() {
 	CommandBase::init();
 	lw = LiveWindow::GetInstance();
 
-	chooser = new SendableChooser();
-	chooser->AddDefault("Straight Center",
-			Autonomous::createStraightGetCenterCan());
-	chooser->AddObject("Pickup Can", Autonomous::createStartWithCan());
-	chooser->AddObject("Blank", new Autonomous());
-	chooser->AddObject("Drive Into Auto Zone",
-			Autonomous::createSimpleDriveForward());
+	/*chooser = new SendableChooser();
+	 chooser->AddDefault("Straight Center",
+	 Autonomous::createStraightGetCenterCan());
+	 chooser->AddObject("Pickup Can", Autonomous::createStartWithCan());
+	 chooser->AddObject("Blank", new Autonomous());
+	 chooser->AddObject("Drive Into Auto Zone",
+	 Autonomous::createSimpleDriveForward());
 
-	SmartDashboard::PutData("Auto Modes", chooser);
-
+	 SmartDashboard::PutData("Auto Modes", chooser);
+	 */
 	CommandBase::oi->registerButtonListeners();
 
 	if (CommandBase::driveBase != NULL) {
@@ -89,60 +89,43 @@ void OmegaSupreme::RobotInit() {
 	SmartDashboard::PutData("down",
 			new GrabCenterCan(AutoCanGrabber::GrabberState::GRAB));
 
-	if (useSuperAuto) {
-		CommandBase::driveBase->setSpeed(0.0, 0.0, 0.0, 0.0);
-		CommandBase::driveBase->setModeAll(
-				CANSpeedController::ControlMode::kPercentVbus);
-		CommandBase::driveBase->zeroPIDOutput();
-		CommandBase::driveBase->startRotPID();
-
-		CommandBase::autoCanGrabber->actuate(
-				AutoCanGrabber::GrabberState::GRAB);
-
-		CommandBase::driveBase->enablePIDAll(false);
-		CommandBase::driveBase->setForward(-.750);
-		CommandBase::driveBase->execute();
-	}
+	autonomousCommand = Autonomous::createStartWithCan();
 }
 
 void OmegaSupreme::AutonomousInit() {
 	Scheduler::GetInstance()->RemoveAll();
-	SmartDashboard::PutString("auto", "insideAutoInit!");
-	CommandBase::toteLifter->getEncoder()->Reset();
-	if (useSuperAuto) {
-		autonomousCommand = Autonomous::createSuperAuto();
-	} else {
-		autonomousCommand = (Command*) chooser->GetSelected();
+	/*CommandBase::toteLifter->getEncoder()->Reset();
+	 if (useSuperAuto) {
+	 autonomousCommand = Autonomous::createSuperAuto();
+	 } else {
+	 //autonomousCommand = (Command*) chooser->GetSelected();
+	 autonomousCommand = Autonomous::createStartWithCan();
+	 }*/
+	if (autonomousCommand != NULL) {
+		autonomousCommand->Start();
 	}
-	autonomousCommand->Start();
 }
 
 void OmegaSupreme::AutonomousPeriodic() {
 	Scheduler::GetInstance()->Run();
-	if (!autonomousCommand->IsRunning() && shouldRun) {
-		if (useSuperAuto) {
-			autonomousCommand = Autonomous::createSuperAuto();
-		} else {
-			autonomousCommand = (Command*) chooser->GetSelected();
-		}
-		autonomousCommand->Start();
-		shouldRun = false;
-	}
-	if (useSuperAuto) {
-		CommandBase::driveBase->execute();
-	}
+	/*if (!autonomousCommand->IsRunning() && shouldRun) {
+	 if (useSuperAuto) {
+	 autonomousCommand = Autonomous::createSuperAuto();
+	 } else {
+	 //autonomousCommand = (Command*) chooser->GetSelected();
+	 autonomousCommand = Autonomous::createStartWithCan();
+	 }
+	 autonomousCommand->Start();
+	 shouldRun = false;
+	 }
+	 if (useSuperAuto) {
+	 CommandBase::driveBase->execute();
+	 }*/
 }
 
 void OmegaSupreme::TeleopInit() {
-	if (useSuperAuto) {
-		CommandBase::driveBase->setForward(0);
-		CommandBase::driveBase->execute();
-		CommandBase::driveBase->stopRotPID();
-	}
 	if (autonomousCommand != NULL) {
 		autonomousCommand->Cancel();
-	} else {
-		CommandBase::toteLifter->getEncoder()->Reset();
 	}
 	CommandBase::driveBase->setModeAll(
 			CANSpeedController::ControlMode::kPercentVbus);
@@ -151,16 +134,16 @@ void OmegaSupreme::TeleopInit() {
 
 void OmegaSupreme::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
-	if (autonomousCommand != NULL) {
-		if (autonomousCommand->IsRunning()) {
-			autonomousCommand->Cancel();
-		}
-		if (chooser->GetSelected() != NULL) {
-			if (((Command *) chooser->GetSelected())->IsRunning()) {
-				((Command *) chooser->GetSelected())->Cancel();
-			}
-		}
-	}
+	/*if (autonomousCommand != NULL) {
+	 if (autonomousCommand->IsRunning()) {
+	 autonomousCommand->Cancel();
+	 }
+	 if (chooser->GetSelected() != NULL) {
+	 if (((Command *) chooser->GetSelected())->IsRunning()) {
+	 ((Command *) chooser->GetSelected())->Cancel();
+	 }
+	 }
+	 }*/
 	SmartDashboard::PutNumber("magSensor",
 			CommandBase::toteLifter->getCraaawInput());
 	SmartDashboard::PutNumber("ArmPot",
