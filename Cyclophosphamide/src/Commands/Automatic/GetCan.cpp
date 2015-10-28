@@ -21,5 +21,5 @@ GetCan::GetCan() {
 	AddSequential(new Induct(CAN_GRAB_SPEED, 1.0));
 	AddSequential(new MoveArmsFancy(MoveArmsFancy::up), 2.0);
 	AddParallel(new TransferCan());
-	AddSequential(new WaitCommand(1.0));
+	AddSequential(new WaitCommand(420.0));
 }

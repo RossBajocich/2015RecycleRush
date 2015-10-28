@@ -7,6 +7,7 @@
 
 #include <AnalogInput.h>
 #include <CANSpeedController.h>
+#include <CANTalon.h>
 #include <Commands/AutoCanGrabber/GrabCenterCan.h>
 #include <Commands/Automatic/TimedDrive.h>
 #include <Commands/Autonomous/Autonomous.h>
@@ -108,48 +109,47 @@ void OmegaSupreme::AutonomousInit() {
 
 void OmegaSupreme::AutonomousPeriodic() {
 	Scheduler::GetInstance()->Run();
-	/*if (!autonomousCommand->IsRunning() && shouldRun) {
-	 if (useSuperAuto) {
-	 autonomousCommand = Autonomous::createSuperAuto();
-	 } else {
-	 //autonomousCommand = (Command*) chooser->GetSelected();
-	 autonomousCommand = Autonomous::createStartWithCan();
-	 }
-	 autonomousCommand->Start();
-	 shouldRun = false;
-	 }
-	 if (useSuperAuto) {
-	 CommandBase::driveBase->execute();
-	 }*/
+	if (!autonomousCommand->IsRunning() && shouldRun) {
+
+		//autonomousCommand = (Command*) chooser->GetSelected();
+		//autonomousCommand = Autonomous::createStartWithCan();
+
+		autonomousCommand->Start();
+		shouldRun = false;
+	}
 }
 
 void OmegaSupreme::TeleopInit() {
 	if (autonomousCommand != NULL) {
 		autonomousCommand->Cancel();
 	}
+	Scheduler::GetInstance()->RemoveAll();
 	CommandBase::driveBase->setModeAll(
 			CANSpeedController::ControlMode::kPercentVbus);
-	Scheduler::GetInstance()->RemoveAll();
 }
 
 void OmegaSupreme::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
-	/*if (autonomousCommand != NULL) {
-	 if (autonomousCommand->IsRunning()) {
-	 autonomousCommand->Cancel();
-	 }
-	 if (chooser->GetSelected() != NULL) {
-	 if (((Command *) chooser->GetSelected())->IsRunning()) {
-	 ((Command *) chooser->GetSelected())->Cancel();
-	 }
-	 }
-	 }*/
+	if (autonomousCommand != NULL) {
+		if (autonomousCommand->IsRunning()) {
+			autonomousCommand->Cancel();
+		}
+	}
 	SmartDashboard::PutNumber("magSensor",
 			CommandBase::toteLifter->getCraaawInput());
 	SmartDashboard::PutNumber("ArmPot",
 			CommandBase::armLifter->getLiftPot()->PIDGet());
 	SmartDashboard::PutNumber("Elevator Encoder",
 			CommandBase::toteLifter->getEncoder()->PIDGet());
+	SmartDashboard::PutNumber("LeftMotorCurrent",
+			CommandBase::toteLifter->getLeftMotor()->GetOutputCurrent());
+	SmartDashboard::PutNumber("RightMotorCurrent",
+			CommandBase::toteLifter->getRightMotor()->GetOutputCurrent());
+	SmartDashboard::PutNumber("armLifterSlaveRightCurrent",
+			CommandBase::armLifter->getStallable()->getSlave()->GetOutputCurrent());
+	SmartDashboard::PutNumber("armLifterMotorLeftCurrent",
+			CommandBase::armLifter->getStallable()->getMotor()->GetOutputCurrent());
+
 }
 
 void OmegaSupreme::DisabledInit() {
@@ -158,11 +158,15 @@ void OmegaSupreme::DisabledInit() {
 
 void OmegaSupreme::TestInit() {
 	Scheduler::GetInstance()->RemoveAll();
+	SmartDashboard::PutNumber("ArmPot",
+			CommandBase::armLifter->getLiftPot()->PIDGet());
 }
 
 void OmegaSupreme::TestPeriodic() {
 	Scheduler::GetInstance()->Run();
-	lw->Run();
+//lw->Run();
+	SmartDashboard::PutNumber("ArmPot",
+			CommandBase::armLifter->getLiftPot()->PIDGet());
 }
 
 START_ROBOT_CLASS(OmegaSupreme);

@@ -25,6 +25,9 @@ public:
 	~StallableMotor();
 	void ThreadKill();
 	void PIDWrite(float output);
+	CANTalon *getSlave();
+	CANTalon *getMotor();
+
 };
 
 #endif /* SRC_UTILITIES_STALLABLEMOTOR_H_ */

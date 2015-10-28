@@ -13,6 +13,7 @@ Autonomous *Autonomous::createStraightGetCenterCan() {
 	Autonomous *cmd = new Autonomous("Autonomous-GetCenterCan");
 	cmd->AddParallel(new GrabCenterCan(AutoCanGrabber::GrabberState::GRAB));
 	cmd->AddSequential(new NoRotateTimedDrive(.750, -MOVE_SPEED));	//TODO: maybe change this? works with 1.0 tho..
+	//cmd->AddSequential(new TimedDrive(.65, 1.0));
 	cmd->AddSequential(new TimedDrive(.88, 1.0));
 	// above used to be 1.35, .7
 

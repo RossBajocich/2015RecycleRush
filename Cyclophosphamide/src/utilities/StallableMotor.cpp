@@ -86,6 +86,15 @@ void* StallableMotor::StallCheck(void*) {
 	}
 }
 
+CANTalon *StallableMotor::getSlave(){
+	return slaveMotor;
+}
+
+CANTalon *StallableMotor::getMotor(){
+	return motor;
+}
+
+
 void StallableMotor::PIDWrite(float output) {
 	if (!stalled) {
 		motor->EnableControl();

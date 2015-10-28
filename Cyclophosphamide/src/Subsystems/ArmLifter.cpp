@@ -11,10 +11,10 @@ ArmLifter::ArmLifter() :
 			liftMotorRight = new CAN_MOTOR_TYPE(CAN_MOTOR_LIFT_RIGHT_PORT););
 
 	SAFE_INIT(CAN_LIFT_POT_PORT, liftPot = new AnalogInput(CAN_LIFT_POT_PORT););
-
+	stallable = new StallableMotor(liftPot, 420, 20, liftMotorRight,
+			liftMotorLeft);
 	armPID = new PIDController(CAN_ARM_P, CAN_ARM_I, CAN_ARM_D, liftPot,
-			new StallableMotor(liftPot, 420, 20, liftMotorRight,
-					liftMotorLeft));
+			stallable);
 
 	armPID->SetOutputRange(-.7, .7);
 	armPID->SetInputRange(CAN_POT_DOWN_POSITION, CAN_POT_UP_POSITION);
@@ -31,6 +31,10 @@ ArmLifter::~ArmLifter() {
 
 void ArmLifter::InitDefaultCommand() {
 
+}
+
+StallableMotor *ArmLifter::getStallable(){
+	return stallable;
 }
 
 void ArmLifter::setArms(float value) {

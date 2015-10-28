@@ -8,8 +8,7 @@ Pneumatics::Pneumatics() :
 			pressureSwitch = new DigitalInput(COMPRESSOR_PRESSURE_SENSOR_PORT););
 	LiveWindow::GetInstance()->AddSensor("Pneumatics", "Pressure Switch",
 			pressureSwitch);
-	SAFE_INIT(COMPRESSOR_RELAY_PORT,
-			relay = new Compressor(COMPRESSOR_RELAY_PORT););
+	SAFE_INIT(COMPRESSOR_RELAY_PORT, relay = new Compressor(COMPRESSOR_RELAY_PORT););
 	LiveWindow::GetInstance()->AddActuator("Pneumatics", "Compressor", relay);
 }
 
@@ -20,7 +19,7 @@ Pneumatics::~Pneumatics() {
 
 void Pneumatics::InitDefaultCommand() {
 	// Set the default command for a subsystem here.
-	SetDefaultCommand(new UpdateCompressor);
+	SetDefaultCommand(new UpdateCompressor());
 }
 
 void Pneumatics::setState(bool state) {
