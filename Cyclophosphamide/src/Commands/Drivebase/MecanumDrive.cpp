@@ -30,12 +30,13 @@ void MecanumDrive::Execute() {
 	}
 	if (fabs(clockwise) < JOYSTICK_ROT_DEADBAND) {
 		clockwise = 0;
-		driveBase->startRotPID();
+		//driveBase->startRotPID();
 	} else {
 		double sign = clockwise > 0 ? 1.0 : -1.0;
 		clockwise -= JOYSTICK_ROT_DEADBAND * sign;
-		driveBase->stopRotPID();
-		driveBase->zeroPIDOutput();
+		//driveBase->stopRotPID();
+		//driveBase->zeroPIDOutput();
+		driveBase->setClockwise(0);
 	}
 
 	// Cube inputs for fine control
@@ -67,9 +68,9 @@ void MecanumDrive::Execute() {
 
 	driveBase->setForward(-forward);
 	driveBase->setRight(right);
-	if (clockwise != 0) {
+	//if (clockwise != 0) {
 		driveBase->setClockwise(-clockwise);
-	}
+	//}
 	driveBase->execute();
 }
 

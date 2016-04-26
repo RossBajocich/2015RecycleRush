@@ -7,6 +7,8 @@
 #include <cmath>
 #include <cstdint>
 
+#define JOYSICK_Z_AXIS_SCALING_FACTOR .8
+
 DriveBase::DriveBase() :
 		Subsystem("DriveBae") {
 	SAFE_INIT(DRIVE_MOTOR_FRONT_LEFT_PORT,
@@ -28,16 +30,17 @@ DriveBase::DriveBase() :
 	serialPort = new SerialPort(57600, SerialPort::kMXP);
 	uint8_t update_rate_hz = 50;
 	gyro = new IMU(serialPort, update_rate_hz);
-	gyroEnabled = true; //gyro != NULL;
+	gyroEnabled = false; //gyro != NULL;
 
 	rotPID = new PIDController(DRIVE_ROT_P, DRIVE_ROT_I, DRIVE_ROT_D, gyro,
 			this);
-	rotPID->Disable();
 
 	rotPID->SetOutputRange(-180.0, 180.0);
 	rotPID->SetInputRange(-180.0, 180.0);
 	rotPID->SetContinuous(true);
 	rotPID->SetSetpoint(gyro->GetYaw());
+
+	rotPID->Disable();
 
 	lightSensor = new DigitalInput(DOESNT_EXIST);
 
@@ -125,7 +128,7 @@ IMU *DriveBase::getGyro() {
 }
 
 void DriveBase::setGyroEnabled(bool enable) {
-	gyroEnabled = enable;
+	//gyroEnabled = enable;
 }
 
 bool DriveBase::isGyroEnabled() {
@@ -160,15 +163,16 @@ void DriveBase::zeroEncoders() {
 	motorBackRight->SetPosition(0);
 }
 
-bool DriveBase::withinThreshhold(double driveThreshhold, double targetDistance) {
-	SmartDashboard::PutNumber("backLeft",
-			fabs(motorBackLeft->GetEncPosition()) - targetDistance);
-	SmartDashboard::PutNumber("frontLeft",
-			fabs(motorBackLeft->GetEncPosition()) - targetDistance);
-	SmartDashboard::PutNumber("backRight",
-			fabs(motorFrontRight->GetEncPosition()) - targetDistance);
-	SmartDashboard::PutNumber("frontRight",
-			fabs(motorBackRight->GetEncPosition()) - targetDistance);
+bool DriveBase::withinThreshhold(double driveThreshhold,
+		double targetDistance) {
+//	SmartDashboard::PutNumber("backLeft",
+//			fabs(motorBackLeft->GetEncPosition()) - targetDistance);
+//	SmartDashboard::PutNumber("frontLeft",
+//			fabs(motorBackLeft->GetEncPosition()) - targetDistance);
+//	SmartDashboard::PutNumber("backRight",
+//			fabs(motorFrontRight->GetEncPosition()) - targetDistance);
+//	SmartDashboard::PutNumber("frontRight",
+//			fabs(motorBackRight->GetEncPosition()) - targetDistance);
 
 	if (fabs(motorBackLeft->GetEncPosition()) - targetDistance < driveThreshhold
 			&& fabs(motorFrontLeft->GetEncPosition()) - targetDistance
@@ -177,10 +181,10 @@ bool DriveBase::withinThreshhold(double driveThreshhold, double targetDistance) 
 					< driveThreshhold
 			&& fabs(motorBackRight->GetEncPosition()) - targetDistance
 					< driveThreshhold) {
-		SmartDashboard::PutBoolean("WithinThreshold", true);
+//		SmartDashboard::PutBoolean("WithinThreshold", true);
 		return true;
 	}
-	SmartDashboard::PutBoolean("WithinThreshold", true);
+//	SmartDashboard::PutBoolean("WithinThreshold", true);
 	return false;
 }
 
@@ -192,9 +196,9 @@ void DriveBase::enablePIDAll(bool state) {
 		motorBackRight->EnableControl();
 	} else {
 		/*motorFrontLeft->Disable();
-		motorFrontRight->Disable();
-		motorBackLeft->Disable();
-		motorBackRight->Disable();*/
+		 motorFrontRight->Disable();
+		 motorBackLeft->Disable();
+		 motorBackRight->Disable();*/
 	}
 }
 
@@ -225,8 +229,9 @@ void DriveBase::setRight(double r) {
 }
 
 void DriveBase::setClockwise(double c) {
-	clockwise = c;
+	clockwise = c * JOYSICK_Z_AXIS_SCALING_FACTOR;
 }
+
 
 double DriveBase::getClockwise() {
 	return clockwise;
@@ -256,11 +261,11 @@ double DriveBase::getSetpoint() {
 }
 
 void DriveBase::setSetpoint(float f) {
-	rotPID->SetSetpoint(f);
+	//rotPID->SetSetpoint(f);
 }
 
 void DriveBase::zeroPIDOutput() {
-	rotPID->SetSetpoint(gyro->GetYaw());
+	//rotPID->SetSetpoint(gyro->GetYaw());
 }
 
 DRIVE_MOTOR_TYPE *DriveBase::getMotor(MotorSide side) {

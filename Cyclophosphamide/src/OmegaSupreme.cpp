@@ -59,8 +59,8 @@ void OmegaSupreme::RobotInit() {
 	 */
 	CommandBase::oi->registerButtonListeners();
 
-	if (CommandBase::driveBase != NULL) {
-		SmartDashboard::PutData("Zero yaw", new ZeroGyro);
+	/*if (CommandBase::driveBase != NULL) {
+		//SmartDashboard::PutData("Zero yaw", new ZeroGyro);
 		bool zeroed = false;
 		double initialTime = Time::getTime();
 		while (!zeroed) {
@@ -69,11 +69,12 @@ void OmegaSupreme::RobotInit() {
 			if (!isCalibrating || Time::getTime() - initialTime > GYRO_TIMEOUT) {
 				Wait(0.2);
 				CommandBase::driveBase->getGyro()->ZeroYaw();
-				//CommandBase::driveBae->startRotPID(); // enable the pid. May want to move this
+				//CommandBase::driveBase->startRotPID(); // enable the pid. May want to move this
 				zeroed = true;
 			}
 		}
 	}
+	*/
 
 	//Easy/quick testing of motors on drivebase in case of issues.
 	SmartDashboard::PutData("Front left",
